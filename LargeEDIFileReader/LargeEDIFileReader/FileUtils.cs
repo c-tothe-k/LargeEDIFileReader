@@ -9,9 +9,9 @@ namespace LargeEDIFileReader
 {
     public static class FileUtils
     {
-        public static int CurrentPageStart { get; set; }
+        public static int CurrentPageStart { get; set; } = 0;
 
-        private static StreamReader FileReader { get; set; }
+        private static EDIFileStream FileReader { get; set; }
 
         private static readonly int PageSize = 1000;
 
@@ -20,38 +20,46 @@ namespace LargeEDIFileReader
         private static char SegmentDelimter { get; set; }
 
         private static char ElementDelimeter { get; set; }
-      
-        public static bool OpenEDIFile(string FileName)
+
+        public static bool OpenEDIFile(EDIFileStream EdiFileStream)
         {
 
-            CloseFileReader();
-
-            FileReader = new StreamReader(FileName);
-           
+            FileReader = EdiFileStream;
             //Read the first 106 bytes, and validate that it at least looks like a 5010 X12 EDI file
+                string Envelope = String.Empty;
 
-            char[] Envelope = new char[EnvelopeSize];
+                try
+                {
+                    Envelope = FileReader.Read( 0, EnvelopeSize);
+
+                    ElementDelimeter  = Envelope[103];
+
+                    SegmentDelimter = Envelope[105];//TODO account for trailing newlines
+
+                    //Check for X12 Control Segment Name
+                    if (Envelope.Substring(0,3) != "ISA")
+                        throw new ArgumentException("File is not an X12 EDI file or file is missing control segment");
+
+
+                    return true;
+                }
+                catch (ArgumentException e)
+                {
+                    return false;
+                }
             
-            try
-            {
-                FileReader.Read(Envelope, 1, EnvelopeSize);
-
-                SegmentDelimter = Envelope[103];
-
-                ElementDelimeter = Envelope[105];
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false; 
-            }
-
         }
 
-        public static void CloseFileReader() => FileReader.Close();
-
-
-
+        public static string LoadPage()
+        {
+          string page =  FileReader.ReadPage(CurrentPageStart, PageSize, SegmentDelimter);
+          CurrentPageStart = CurrentPageStart + PageSize;
+          return page;
+        }
+       
+        public static void Close()
+        {
+            FileReader.Dispose();
+        }
     }
 }

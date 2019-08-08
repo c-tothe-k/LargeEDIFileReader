@@ -33,6 +33,17 @@ namespace LargeEDIFileReader
             if (picker.ShowDialog() == true)
             {
                 FileName.Text = $"File Open: {picker.FileName}";
+
+                var ediStream = new EDIFileStream(picker.FileName);
+                bool fileOk = FileUtils.OpenEDIFile(ediStream);
+                if (!fileOk)
+                {
+                    MessageBox.Show("Error: File is not an X12 EDI file. Please try a different file.");
+                }
+                else
+                {
+                    FileContent.Text = FileUtils.LoadPage();
+                }
             }
         }
 
@@ -53,7 +64,7 @@ namespace LargeEDIFileReader
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            FileUtils.CloseFileReader();
+            FileUtils.Close();
         }
     }
 }
