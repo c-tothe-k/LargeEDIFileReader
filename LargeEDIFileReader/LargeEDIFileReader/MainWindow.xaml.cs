@@ -42,7 +42,7 @@ namespace LargeEDIFileReader
                 }
                 else
                 {
-                    FileContent.Text = FileUtils.LoadPage();
+                    FileContent.Text = FileUtils.LoadNextPage();
                 }
             }
         }

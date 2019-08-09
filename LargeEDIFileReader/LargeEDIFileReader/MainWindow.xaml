@@ -26,8 +26,8 @@
             <Button Content="Go To Line" Width="75" Click="Button_Click_1" Style="{StaticResource ButtonMargin}"/>
         </StackPanel>
         <StackPanel>
-            <TextBox Name="FileContent" Margin="31,20,31,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="387" />
-            <TextBox Name="SearchResults"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="220" Margin="31,15,31,10"/>
+            <TextBox Name="FileContent" Margin="31,20,31,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="387" IsReadOnly="True" />
+            <TextBox Name="SearchResults"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="220" Margin="31,15,31,10" IsReadOnly="True" />
         </StackPanel>
     </StackPanel>
 </Window>
