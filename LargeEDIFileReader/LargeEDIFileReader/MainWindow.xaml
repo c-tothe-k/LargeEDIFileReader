@@ -24,6 +24,12 @@
             <Button Content="Count Hits" Width="75" Click="Button_Click" Style="{StaticResource ButtonMargin}"/>
             <TextBox Name="GotoLine" Margin="45,0,5,0" Height="35" Width="100"/>
             <Button Content="Go To Line" Width="75" Click="Button_Click_1" Style="{StaticResource ButtonMargin}"/>
+            <Button Content="&lt;-" Width="25" Click="PreviousPage"  Style="{StaticResource ButtonMargin}"/>
+            <Button Content="-&gt;" Width="25" Click="NextPage" Style="{StaticResource ButtonMargin}"/>
+            <StackPanel x:Name="PageNumberContainer" Margin="25,10,5,0">
+              <TextBlock Name="TotalPages" Text="Total Pages: "></TextBlock>
+              <TextBlock Name="CurrentPage" Text="Current Page: "></TextBlock>
+            </StackPanel>
         </StackPanel>
         <StackPanel>
             <TextBox Name="FileContent" Margin="31,20,31,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="387" IsReadOnly="True" />

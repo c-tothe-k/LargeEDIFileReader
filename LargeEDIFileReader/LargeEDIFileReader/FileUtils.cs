@@ -9,12 +9,19 @@ namespace LargeEDIFileReader
 {
     public static class FileUtils
     {
+        public enum NavigationType
+        {
+            Next,
+            Previous
+        }
+
         public static int CurrentPageNumber { get; set; } = 0;
 
         private static EDIFileStream FileReader { get; set; }
 
         private static readonly int PageSize = 10000;
 
+        public static int TotalPages { get; set; }
 
        
 
@@ -31,8 +38,8 @@ namespace LargeEDIFileReader
                    //Check for X12 Control Segment Name
                    if (String.IsNullOrEmpty(Envelope) || Envelope.Length != 106 || Envelope.Substring(0, 3) != "ISA")
                        throw new ArgumentException("File is not an X12 EDI file or file is missing control segment.");
-                                
-                   FileReader.LoadSegmentOffset();         
+
+                   TotalPages = FileReader.LoadSegmentOffset();         
                    return true;
                 }
                 catch (ArgumentException e)
@@ -42,9 +49,14 @@ namespace LargeEDIFileReader
             
         }
 
-        public static string LoadNextPage()
+
+        public static string LoadPage(NavigationType type)
         {
-            CurrentPageNumber++;
+            if (type == NavigationType.Next)
+                CurrentPageNumber++;
+            else
+                CurrentPageNumber--;
+
             string page = FileReader.ReadPage(CurrentPageNumber);         
             return page;
         }

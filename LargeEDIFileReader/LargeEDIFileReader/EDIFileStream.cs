@@ -48,7 +48,7 @@ namespace LargeEDIFileReader
 
         //Load a dictionary that keeps track of where in the filestream
         //each page break is, so we can easily jump to any page we want.
-        public void LoadSegmentOffset()
+        public int LoadSegmentOffset()
         {
             int offset = 0;
             int pageNumber = 1;
@@ -66,7 +66,6 @@ namespace LargeEDIFileReader
                         pageNumber++;
                         PageOffsetMap.Add(pageNumber, offset);
                     }
-
                 } 
                 else
                 {
@@ -74,6 +73,7 @@ namespace LargeEDIFileReader
                 }
                 next = Reader.ReadByte();
             }
+            return pageNumber;
         }
 
         //Read and build a segment from the stream

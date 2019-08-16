@@ -42,7 +42,9 @@ namespace LargeEDIFileReader
                 }
                 else
                 {
-                    FileContent.Text = FileUtils.LoadNextPage();
+                    TotalPages.Text += Convert.ToString(FileUtils.TotalPages);
+                    FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
+                    CurrentPage.Text += Convert.ToString(FileUtils.CurrentPageNumber);
                 }
             }
         }
@@ -65,6 +67,24 @@ namespace LargeEDIFileReader
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             FileUtils.Close();
+        }
+
+        private void PreviousPage(object sender, RoutedEventArgs e)
+        {
+            if (FileUtils.CurrentPageNumber > 1)
+            {
+                FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Previous);
+                CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+            }
+        }
+
+        private void NextPage(object sender, RoutedEventArgs e)
+        {
+            if (FileUtils.CurrentPageNumber < FileUtils.TotalPages)
+            {
+                FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
+                CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+            }
         }
     }
 }
