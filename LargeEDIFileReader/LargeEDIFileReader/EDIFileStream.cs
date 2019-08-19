@@ -63,14 +63,11 @@ namespace LargeEDIFileReader
                     segmentsRead++;
                     if (segmentsRead % 10000 == 0)
                     {
-                        pageNumber++;
-                        PageOffsetMap.Add(pageNumber, offset);
+                        pageNumber++;                      
+                        PageOffsetMap.Add(pageNumber, offset+1); 
                     }
-                } 
-                else
-                {
-                    offset++;
-                }
+                }               
+                offset++;                
                 next = Reader.ReadByte();
             }
             return pageNumber;
