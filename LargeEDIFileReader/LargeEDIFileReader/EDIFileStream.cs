@@ -50,6 +50,8 @@ namespace LargeEDIFileReader
         //each page break is, so we can easily jump to any page we want.
         public int LoadSegmentOffset()
         {
+            PageOffsetMap.Clear(); 
+
             int offset = 0;
             int pageNumber = 1;
             int segmentsRead = 0;
@@ -76,23 +78,23 @@ namespace LargeEDIFileReader
         //Read and build a segment from the stream
         private string ReadSegment()
         {
-            string elementText = String.Empty;
+            string segmentText = String.Empty;
             bool keepReading = true;
             int next = Reader.ReadByte();
             while (keepReading && next > 0)
             {
                 if (next != SegmentDelimter)
                 {
-                    elementText += (char)next;
+                    segmentText += (char)next;
                     next = Reader.ReadByte();
                 }
                 else
                 {
-                    elementText += Environment.NewLine;
+                    segmentText += Environment.NewLine;
                     keepReading = false;
                 }              
             }
-            return elementText;
+            return segmentText;
         }
 
         //Read a number of segments from the stream, and return them a string.
@@ -103,11 +105,14 @@ namespace LargeEDIFileReader
             var builder = new StringBuilder();
             int pageStartPos = PageOffsetMap[pageNumber];
             this.Reader.Seek(pageStartPos, SeekOrigin.Begin);
-
-            for (int i=0; i< 10000; i++)
+            int i = 0;
+            string curSegment = "x";
+            while (i<10000 && !String.IsNullOrEmpty(curSegment))
             {
-                builder.Append(Convert.ToString(i + 1).PadRight(5));
-                builder.Append(ReadSegment());
+                builder.Append(Convert.ToString( i + 1 + (10_000 * (pageNumber-1) ) ).PadRight(10));
+                curSegment = ReadSegment();
+                builder.Append(curSegment);
+                i++;
             }
             return builder.ToString();
         }

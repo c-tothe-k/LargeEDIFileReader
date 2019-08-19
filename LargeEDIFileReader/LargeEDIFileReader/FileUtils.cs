@@ -27,11 +27,12 @@ namespace LargeEDIFileReader
 
         public static bool OpenEDIFile(EDIFileStream EdiFileStream)
         {
+            if (FileReader != null) FileReader.Dispose(); // if we're opening a 2nd (or more) file, close the stream from the previous one
 
             FileReader = EdiFileStream;
             //Read the first 106 bytes, and validate that it at least looks like a 5010 X12 EDI file
              string Envelope = String.Empty;
-
+             CurrentPageNumber = 0;
               try
                 {
                    Envelope = FileReader.ReadEnvelope();

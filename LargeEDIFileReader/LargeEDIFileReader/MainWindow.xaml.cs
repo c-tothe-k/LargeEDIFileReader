@@ -42,9 +42,9 @@ namespace LargeEDIFileReader
                 }
                 else
                 {
-                    TotalPages.Text += Convert.ToString(FileUtils.TotalPages);
+                    TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
                     FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
-                    CurrentPage.Text += Convert.ToString(FileUtils.CurrentPageNumber);
+                    CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
                 }
             }
         }
