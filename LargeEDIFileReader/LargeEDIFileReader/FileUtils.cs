@@ -19,7 +19,6 @@ namespace LargeEDIFileReader
 
         private static EDIFileStream FileReader { get; set; }
 
-        private static readonly int PageSize = 10000;
 
         public static int TotalPages { get; set; }
 

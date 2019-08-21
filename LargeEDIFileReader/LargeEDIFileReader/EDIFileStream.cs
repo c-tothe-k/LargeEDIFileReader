@@ -9,7 +9,7 @@ namespace LargeEDIFileReader
 {
     public class EDIFileStream : IDisposable
     {
-        private FileStream Reader { get; set; }
+        private Stream Reader { get; set; }
 
         private static char SegmentDelimter { get; set; }
 
@@ -22,10 +22,9 @@ namespace LargeEDIFileReader
 
         public static Dictionary<int, int> PageOffsetMap { get; set; } = new Dictionary<int, int>();
 
-        public EDIFileStream(string FileName)
-        {
-            this.Reader = File.OpenRead(FileName);
-        }
+        public EDIFileStream(Stream stream) =>
+            this.Reader = stream;
+        
 
         //Extract the EDI envelope (first 106 chars) and return it
         //as a string
@@ -48,7 +47,7 @@ namespace LargeEDIFileReader
 
         //Load a dictionary that keeps track of where in the filestream
         //each page break is, so we can easily jump to any page we want.
-        public int LoadSegmentOffset()
+        public int LoadSegmentOffset(int pageSize = 10000)
         {
             PageOffsetMap.Clear(); 
 
@@ -63,7 +62,7 @@ namespace LargeEDIFileReader
                 if (next == SegmentDelimter)
                 {
                     segmentsRead++;
-                    if (segmentsRead % 10000 == 0)
+                    if (segmentsRead % pageSize == 0)
                     {
                         pageNumber++;                      
                         PageOffsetMap.Add(pageNumber, offset+1); 

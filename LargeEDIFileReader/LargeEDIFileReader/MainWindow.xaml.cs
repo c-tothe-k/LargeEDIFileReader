@@ -34,7 +34,9 @@ namespace LargeEDIFileReader
             {
                 FileName.Text = $"File Open: {picker.FileName}";
 
-                var ediStream = new EDIFileStream(picker.FileName);
+                var fileStream = File.OpenRead(picker.FileName);
+                var ediStream = new EDIFileStream(fileStream);
+
                 bool fileOk = FileUtils.OpenEDIFile(ediStream);
                 if (!fileOk)
                 {
