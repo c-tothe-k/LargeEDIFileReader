@@ -25,6 +25,7 @@ namespace LargeEDIFileReader
         public EDIFileStream(Stream stream) =>
             this.Reader = stream;
         
+        private int PageSize { get; set; }
 
         //Extract the EDI envelope (first 106 chars) and return it
         //as a string
@@ -47,8 +48,11 @@ namespace LargeEDIFileReader
 
         //Load a dictionary that keeps track of where in the filestream
         //each page break is, so we can easily jump to any page we want.
-        public int LoadSegmentOffset(int pageSize = 10000)
+        public int LoadSegmentOffset(int pageSize = 10_000)
         {
+
+            this.PageSize = pageSize;
+
             PageOffsetMap.Clear(); 
 
             int offset = 0;
@@ -106,9 +110,9 @@ namespace LargeEDIFileReader
             this.Reader.Seek(pageStartPos, SeekOrigin.Begin);
             int i = 0;
             string curSegment = "x";
-            while (i<10000 && !String.IsNullOrEmpty(curSegment))
+            while (i< this.PageSize && !String.IsNullOrEmpty(curSegment))
             {
-                builder.Append(Convert.ToString( i + 1 + (10_000 * (pageNumber-1) ) ).PadRight(10));
+               // builder.Append(Convert.ToString( i + 1 + (this.PageSize * (pageNumber-1) ) ).PadRight(10));
                 curSegment = ReadSegment();
                 builder.Append(curSegment);
                 i++;
