@@ -32,6 +32,7 @@ namespace LargeEDIFileReader
             var picker = new OpenFileDialog();
             if (picker.ShowDialog() == true)
             {
+                SearchResults.Text = String.Empty;
                 FileName.Text = $"File Open: {picker.FileName}";
 
                 var fileStream = File.OpenRead(picker.FileName);
@@ -62,10 +63,9 @@ namespace LargeEDIFileReader
 
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) =>
             FileUtils.Close();
-        }
+        
 
         private void PreviousPage(object sender, RoutedEventArgs e)
         {
@@ -83,6 +83,15 @@ namespace LargeEDIFileReader
                 FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
                 CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
             }
+        }
+
+        private void NavigateToElement(object sender, MouseButtonEventArgs e)
+        {
+            int cursorPos = SearchResults.CaretIndex;
+            int curLine = SearchResults.GetLineIndexFromCharacterIndex(cursorPos);
+            string clickedLine = SearchResults.GetLineText(curLine);
+            string segmentNum = clickedLine.Split(':')[0];
+            //MessageBox.Show($"we need to nav to segment number {segmentNum}!");
         }
     }
 }
