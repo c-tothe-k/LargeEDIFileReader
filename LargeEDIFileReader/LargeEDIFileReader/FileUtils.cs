@@ -49,6 +49,9 @@ namespace LargeEDIFileReader
             
         }
 
+        public static string PerformSearch(EDIFileStream.SearchType type, string textToFind) =>
+            String.IsNullOrWhiteSpace(textToFind)? "" : FileReader.SearchFile(type, textToFind);
+
 
         public static string LoadPage(NavigationType type)
         {

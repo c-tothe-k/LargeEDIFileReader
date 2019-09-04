@@ -51,15 +51,11 @@ namespace LargeEDIFileReader
             }
         }
 
-        private void Perform_Search(object sender, RoutedEventArgs e)
-        {
+        private void Perform_Search(object sender, RoutedEventArgs e) =>               
+             SearchResults.Text = FileUtils.PerformSearch(EDIFileStream.SearchType.Text, SearchTerm.Text);        
 
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        private void Perform_Search_Count(object sender, RoutedEventArgs e) =>
+             SearchResults.Text = FileUtils.PerformSearch(EDIFileStream.SearchType.CountOnly, SearchTerm.Text);
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {

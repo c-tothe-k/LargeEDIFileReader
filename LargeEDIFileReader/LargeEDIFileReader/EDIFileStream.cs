@@ -9,6 +9,12 @@ namespace LargeEDIFileReader
 {
     public class EDIFileStream : IDisposable
     {
+        public enum SearchType
+        {
+            Text,
+            CountOnly
+        }
+
         private Stream Reader { get; set; }
 
         private static char SegmentDelimter { get; set; }
@@ -117,6 +123,38 @@ namespace LargeEDIFileReader
                 builder.Append(curSegment);
                 i++;
             }
+            return builder.ToString();
+        }
+
+        public string SearchFile(SearchType type, string searchText)
+        {
+
+            this.Reader.Seek(0, SeekOrigin.Begin); //start from the begining
+            var builder = new StringBuilder();
+            int maxFound = type == SearchType.CountOnly ? Int32.MaxValue : 30000;
+            int amtFound = 0;
+            string curSegment = "x";
+            int segCount = 0;
+            while (amtFound < maxFound && !String.IsNullOrEmpty(curSegment))
+            {
+                segCount++;
+                curSegment = ReadSegment();
+                if (curSegment.Contains(searchText))
+                {
+                    amtFound++;
+                    if (type == SearchType.Text)
+                    {
+                        builder.Append($"{segCount}: {curSegment}");
+                    }
+
+                }
+            }
+
+            if (type == SearchType.CountOnly)
+            {
+                builder.Append($"{amtFound} hits.");
+            }
+
             return builder.ToString();
         }
 

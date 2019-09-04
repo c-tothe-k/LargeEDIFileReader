@@ -11,12 +11,6 @@ namespace LargeEDIReader_Tests
     [TestClass]
     public class EDIFileStreamTests
     {
-        public enum SearchType
-        {
-            Text,
-            CountOnly            
-        }
-
         private static EDIFileStream CreateTestEDIStream(string ediString)
         {
             UTF8Encoding Encoding = new UTF8Encoding(true);
