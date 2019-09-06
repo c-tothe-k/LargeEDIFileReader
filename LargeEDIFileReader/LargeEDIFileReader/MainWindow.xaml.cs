@@ -91,7 +91,8 @@ namespace LargeEDIFileReader
             int curLine = SearchResults.GetLineIndexFromCharacterIndex(cursorPos);
             string clickedLine = SearchResults.GetLineText(curLine);
             string segmentNum = clickedLine.Split(':')[0];
-            //MessageBox.Show($"we need to nav to segment number {segmentNum}!");
+            FileContent.Text = FileUtils.LoadPageFromSegmentPosition(Convert.ToInt32(segmentNum));
+            CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
         }
     }
 }

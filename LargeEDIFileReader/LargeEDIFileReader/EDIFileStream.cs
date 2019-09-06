@@ -26,7 +26,14 @@ namespace LargeEDIFileReader
 
         private static UTF8Encoding Encoding = new UTF8Encoding(true);
 
-        public static Dictionary<int, int> PageOffsetMap { get; set; } = new Dictionary<int, int>();
+        private struct PageTracker
+        {
+           internal int PageStartByteOffset { get; set; }
+
+           internal int PageStartSegmentOffset { get; set; }
+        }
+
+        private static Dictionary<int, PageTracker> PageOffsetMap { get; set; } = new Dictionary<int, PageTracker>();
 
         public EDIFileStream(Stream stream) =>
             this.Reader = stream;
@@ -55,7 +62,7 @@ namespace LargeEDIFileReader
         //Load a dictionary that keeps track of where in the filestream
         //each page break is, so we can easily jump to any page we want.
         public int LoadSegmentOffset(int pageSize = 10_000)
-        {
+        {         
 
             this.PageSize = pageSize;
 
@@ -64,7 +71,10 @@ namespace LargeEDIFileReader
             int offset = 0;
             int pageNumber = 1;
             int segmentsRead = 0;
-            PageOffsetMap.Add(pageNumber, 0);
+            PageOffsetMap.Add(pageNumber, new PageTracker
+            { PageStartByteOffset = offset,
+                PageStartSegmentOffset = segmentsRead 
+             });
 
             int next = Reader.ReadByte();
             while (next > 0)
@@ -74,8 +84,13 @@ namespace LargeEDIFileReader
                     segmentsRead++;
                     if (segmentsRead % pageSize == 0)
                     {
-                        pageNumber++;                      
-                        PageOffsetMap.Add(pageNumber, offset+1); 
+                        pageNumber++;             
+
+                        PageOffsetMap.Add(pageNumber, new PageTracker()
+                        {
+                            PageStartByteOffset = offset + 1,
+                            PageStartSegmentOffset = segmentsRead
+                        }); 
                     }
                 }               
                 offset++;                
@@ -112,7 +127,7 @@ namespace LargeEDIFileReader
         {
  
             var builder = new StringBuilder();
-            int pageStartPos = PageOffsetMap[pageNumber];
+            int pageStartPos = PageOffsetMap[pageNumber].PageStartByteOffset;
             this.Reader.Seek(pageStartPos, SeekOrigin.Begin);
             int i = 0;
             string curSegment = "x";
@@ -124,6 +139,12 @@ namespace LargeEDIFileReader
                 i++;
             }
             return builder.ToString();
+        }
+
+        public string LoadPageFromSegment(int segmentLineNumber, out int pageNumber)
+        {
+            pageNumber = PageOffsetMap.Where((kvp) => kvp.Value.PageStartSegmentOffset <= segmentLineNumber).Select(kvp => kvp.Key).Last();
+            return ReadPage(pageNumber);
         }
 
         public string SearchFile(SearchType type, string searchText)
