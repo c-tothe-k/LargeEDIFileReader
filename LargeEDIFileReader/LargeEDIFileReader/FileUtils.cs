@@ -53,10 +53,10 @@ namespace LargeEDIFileReader
             String.IsNullOrWhiteSpace(textToFind)? "" : FileReader.SearchFile(type, textToFind);
 
 
-        public static string LoadPageFromSegmentPosition(int segmentLineNumber)
+        public static string LoadPageFromSegmentPosition(int segmentLineNumber, out int pageStartSegmentOffset)
         {
-            int newPageNumber = 0;                       
-            var pageText =  FileReader.LoadPageFromSegment(segmentLineNumber, out newPageNumber);
+            int newPageNumber = 0;              
+            var pageText =  FileReader.LoadPageFromSegment(segmentLineNumber, out newPageNumber, out pageStartSegmentOffset);
             CurrentPageNumber = newPageNumber;
 
             return pageText;

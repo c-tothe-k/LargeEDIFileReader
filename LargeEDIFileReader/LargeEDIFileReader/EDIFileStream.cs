@@ -102,23 +102,23 @@ namespace LargeEDIFileReader
         //Read and build a segment from the stream
         private string ReadSegment()
         {
-            string segmentText = String.Empty;
+            var segmentText = new StringBuilder();
             bool keepReading = true;
             int next = Reader.ReadByte();
             while (keepReading && next > 0)
             {
                 if (next != SegmentDelimter)
                 {
-                    segmentText += (char)next;
+                    segmentText.Append((char)next);
                     next = Reader.ReadByte();
                 }
                 else
                 {
-                    segmentText += Environment.NewLine;
+                    segmentText.Append(Environment.NewLine);
                     keepReading = false;
                 }              
             }
-            return segmentText;
+            return segmentText.ToString();
         }
 
         //Read a number of segments from the stream, and return them a string.
@@ -141,9 +141,12 @@ namespace LargeEDIFileReader
             return builder.ToString();
         }
 
-        public string LoadPageFromSegment(int segmentLineNumber, out int pageNumber)
+        public string LoadPageFromSegment(int segmentLineNumber, out int pageNumber, out int pageSegmentStart)
         {
-            pageNumber = PageOffsetMap.Where((kvp) => kvp.Value.PageStartSegmentOffset <= segmentLineNumber).Select(kvp => kvp.Key).Last();
+            var pageInfo = PageOffsetMap.Where((kvp) => kvp.Value.PageStartSegmentOffset <= segmentLineNumber).Last();
+            pageNumber = pageInfo.Key;
+            pageSegmentStart = pageInfo.Value.PageStartSegmentOffset;
+
             return ReadPage(pageNumber);
         }
 

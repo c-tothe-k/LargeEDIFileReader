@@ -58,9 +58,13 @@ namespace LargeEDIFileReader
         private void Perform_Search_Count(object sender, RoutedEventArgs e) =>
              SearchResults.Text = FileUtils.PerformSearch(EDIFileStream.SearchType.CountOnly, SearchTerm.Text);
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Perform_GotoLine(object sender, RoutedEventArgs e)
         {
-
+            int lineToGoTo = 0;
+            if ( Int32.TryParse( GotoLine.Text, out lineToGoTo) )
+            {
+                JumpToSegment(lineToGoTo);
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) =>
@@ -85,14 +89,28 @@ namespace LargeEDIFileReader
             }
         }
 
+
+        private void JumpToSegment(int segmentLineNumber)
+        {
+            int pageStart = 0;
+            FileContent.Text = FileUtils.LoadPageFromSegmentPosition(segmentLineNumber, out pageStart);
+            int exactLine = segmentLineNumber - pageStart - 10; //"magic number" is to get the result in the center-ish of the window
+            FileContent.ScrollToLine(exactLine);
+            FileContent.SelectionStart = FileContent.GetCharacterIndexFromLineIndex(exactLine);
+
+
+            CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+        }
+
         private void NavigateToElement(object sender, MouseButtonEventArgs e)
         {
             int cursorPos = SearchResults.CaretIndex;
             int curLine = SearchResults.GetLineIndexFromCharacterIndex(cursorPos);
             string clickedLine = SearchResults.GetLineText(curLine);
-            string segmentNum = clickedLine.Split(':')[0];
-            FileContent.Text = FileUtils.LoadPageFromSegmentPosition(Convert.ToInt32(segmentNum));
-            CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+            int segmentNum = Convert.ToInt32(clickedLine.Split(':')[0]);
+            JumpToSegment(segmentNum);
+
+
         }
     }
 }

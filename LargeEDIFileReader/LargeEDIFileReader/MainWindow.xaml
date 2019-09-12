@@ -23,7 +23,7 @@
             <Button Content="Search" Width="75" Click="Perform_Search" Style="{StaticResource ButtonMargin}"/>
             <Button Content="Count Hits" Width="75" Click="Perform_Search_Count" Style="{StaticResource ButtonMargin}"/>
             <TextBox Name="GotoLine" Margin="45,0,5,0" Height="35" Width="100"/>
-            <Button Content="Go To Line" Width="75" Click="Button_Click_1" Style="{StaticResource ButtonMargin}"/>
+            <Button Content="Go To Line" Width="75" Click="Perform_GotoLine" Style="{StaticResource ButtonMargin}"/>
             <Button Content="&lt;-" Width="25" Click="PreviousPage"  Style="{StaticResource ButtonMargin}"/>
             <Button Content="-&gt;" Width="25" Click="NextPage" Style="{StaticResource ButtonMargin}"/>
             <StackPanel x:Name="PageNumberContainer" Margin="25,10,5,0">
