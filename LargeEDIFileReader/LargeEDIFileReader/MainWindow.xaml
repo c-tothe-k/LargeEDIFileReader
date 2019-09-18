@@ -27,12 +27,15 @@
             <Button Content="&lt;-" Width="25" Click="PreviousPage"  Style="{StaticResource ButtonMargin}"/>
             <Button Content="-&gt;" Width="25" Click="NextPage" Style="{StaticResource ButtonMargin}"/>
             <StackPanel x:Name="PageNumberContainer" Margin="25,10,5,0">
-              <TextBlock Name="TotalPages" Text="Total Pages: "></TextBlock>
-              <TextBlock Name="CurrentPage" Text="Current Page: "></TextBlock>
+                <TextBlock Name="TotalPages" Text="Total Pages: "></TextBlock>
+                <TextBlock Name="CurrentPage" Text="Current Page: "></TextBlock>
             </StackPanel>
         </StackPanel>
         <StackPanel>
-            <TextBox Name="FileContent" Margin="31,20,31,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="387" IsReadOnly="True" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="Gutter" Height="374" TextWrapping="Wrap" Width="61" Margin="15,21,0,0" BorderThickness="2,2,0,2" Background="#FFDCD8D8" FontFamily="Consolas" FontSize="12pt"/>
+                <TextBox x:Name="FileContent" Margin="0,21,15,0"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="374" IsReadOnly="True" Width="876" BorderThickness="0,2,2,2" ScrollViewer.ScrollChanged="FileContent_ScrollChanged" />
+            </StackPanel>
             <TextBox Name="SearchResults"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="220" Margin="31,15,31,10" IsReadOnly="True" MouseDoubleClick="NavigateToElement" />
         </StackPanel>
     </StackPanel>

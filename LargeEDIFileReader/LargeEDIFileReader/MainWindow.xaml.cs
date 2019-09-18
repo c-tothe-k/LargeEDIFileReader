@@ -48,6 +48,7 @@ namespace LargeEDIFileReader
                     TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
                     FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
                     CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
+                    UpdateLineNumbers();
                 }
             }
         }
@@ -77,6 +78,7 @@ namespace LargeEDIFileReader
             {
                 FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Previous);
                 CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+                UpdateLineNumbers();
             }
         }
 
@@ -86,9 +88,18 @@ namespace LargeEDIFileReader
             {
                 FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
                 CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+                UpdateLineNumbers();
             }
         }
 
+        private void UpdateLineNumbers()
+        {
+            int pageSegmentSize = 10_000; //TODO get this out of the edistream instance instead of hardcode
+            var lineNumbers = Enumerable.Range(1, pageSegmentSize)
+                      .Select(i => Convert.ToString(i + pageSegmentSize * (FileUtils.CurrentPageNumber - 1))).ToArray();
+            Gutter.Text = String.Join(Environment.NewLine, lineNumbers);
+
+        }
 
         private void JumpToSegment(int segmentLineNumber)
         {
@@ -111,6 +122,14 @@ namespace LargeEDIFileReader
             JumpToSegment(segmentNum);
 
 
+        }
+
+        private void FileContent_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            //keep the gutter on track with the file
+            Gutter.ScrollToVerticalOffset(e.VerticalOffset);
+          
+            //TODO: add one for the gutter as well
         }
     }
 }
