@@ -132,8 +132,7 @@ namespace LargeEDIFileReader
             int i = 0;
             string curSegment = "x";
             while (i< this.PageSize && !String.IsNullOrEmpty(curSegment))
-            {
-               // builder.Append(Convert.ToString( i + 1 + (this.PageSize * (pageNumber-1) ) ).PadRight(10));
+            {               
                 curSegment = ReadSegment();
                 builder.Append(curSegment);
                 i++;
@@ -141,6 +140,7 @@ namespace LargeEDIFileReader
             return builder.ToString();
         }
 
+        //Based on a segment's sequence in the EDI file, find which page it's on, and return that entire page as a string
         public string LoadPageFromSegment(int segmentLineNumber, out int pageNumber, out int pageSegmentStart)
         {
             var pageInfo = PageOffsetMap.Where((kvp) => kvp.Value.PageStartSegmentOffset <= segmentLineNumber).Last();
@@ -150,6 +150,8 @@ namespace LargeEDIFileReader
             return ReadPage(pageNumber);
         }
 
+        //This will scan the entire EDI file looking for a straight, case sensitive text match
+        //a string of matched segments are returned as a string, in the format: "<sequence>: <segmentText>"
         public string SearchFile(SearchType type, string searchText)
         {
 

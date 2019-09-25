@@ -32,6 +32,7 @@ namespace LargeEDIFileReader
             var picker = new OpenFileDialog();
             if (picker.ShowDialog() == true)
             {
+                Mouse.OverrideCursor = Cursors.Wait;
                 SearchResults.Text = String.Empty;
                 FileName.Text = $"File Open: {picker.FileName}";
 
@@ -41,20 +42,27 @@ namespace LargeEDIFileReader
                 bool fileOk = FileUtils.OpenEDIFile(ediStream);
                 if (!fileOk)
                 {
+                    Mouse.OverrideCursor = null;
                     MessageBox.Show("Error: File is not an X12 EDI file. Please try a different file.");
                 }
                 else
                 {
+                   
                     TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
                     FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
                     CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
                     UpdateLineNumbers();
+                    Mouse.OverrideCursor = null;
                 }
             }
         }
 
-        private void Perform_Search(object sender, RoutedEventArgs e) =>               
-             SearchResults.Text = FileUtils.PerformSearch(EDIFileStream.SearchType.Text, SearchTerm.Text);        
+        private void Perform_Search(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            SearchResults.Text = FileUtils.PerformSearch(EDIFileStream.SearchType.Text, SearchTerm.Text);
+            Mouse.OverrideCursor = null;
+        }
 
         private void Perform_Search_Count(object sender, RoutedEventArgs e) =>
              SearchResults.Text = FileUtils.PerformSearch(EDIFileStream.SearchType.CountOnly, SearchTerm.Text);
@@ -103,14 +111,20 @@ namespace LargeEDIFileReader
 
         private void JumpToSegment(int segmentLineNumber)
         {
+           
+            FileContent.Focus();
             int pageStart = 0;
             FileContent.Text = FileUtils.LoadPageFromSegmentPosition(segmentLineNumber, out pageStart);
-            int exactLine = segmentLineNumber - pageStart - 10; //"magic number" is to get the result in the center-ish of the window
+            UpdateLineNumbers();
+            int exactLine = segmentLineNumber - pageStart - 1;
             FileContent.ScrollToLine(exactLine);
+            FileContent.GetCharacterIndexFromLineIndex(exactLine); //?????for some reason the whole navigate to segment thing gets messed up if I take this out, need to find out why
             FileContent.SelectionStart = FileContent.GetCharacterIndexFromLineIndex(exactLine);
-
+            FileContent.SelectionLength = FileContent.GetLineText(exactLine).Length;
 
             CurrentPage.Text = $"Current Page: {FileUtils.CurrentPageNumber}";
+           
+
         }
 
         private void NavigateToElement(object sender, MouseButtonEventArgs e)
@@ -120,16 +134,17 @@ namespace LargeEDIFileReader
             string clickedLine = SearchResults.GetLineText(curLine);
             int segmentNum = Convert.ToInt32(clickedLine.Split(':')[0]);
             JumpToSegment(segmentNum);
-
-
         }
 
         private void FileContent_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             //keep the gutter on track with the file
-            Gutter.ScrollToVerticalOffset(e.VerticalOffset);
-          
-            //TODO: add one for the gutter as well
+            Gutter.ScrollToVerticalOffset(e.VerticalOffset);                   
+        }
+
+        private void Gutter_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            FileContent.ScrollToVerticalOffset(e.VerticalOffset);
         }
     }
 }
