@@ -105,7 +105,10 @@ namespace LargeEDIFileReader
             int pageSegmentSize = 10_000; //TODO get this out of the edistream instance instead of hardcode
             var lineNumbers = Enumerable.Range(1, pageSegmentSize)
                       .Select(i => Convert.ToString(i + pageSegmentSize * (FileUtils.CurrentPageNumber - 1))).ToArray();
-            Gutter.Text = String.Join(Environment.NewLine, lineNumbers);
+            //We're adding an extra NewLine here because each segment read from the EDIReader has a newline, and String.Join doesn't
+            //add the seperator after the last item. So we need to add an extra one so the Gutter and EDI text have the same number
+            //of lines (or the scrolling/line-gutter matching gets messed up)
+            Gutter.Text = String.Join(Environment.NewLine, lineNumbers) + Environment.NewLine; 
 
         }
 

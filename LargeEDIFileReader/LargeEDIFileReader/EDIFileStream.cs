@@ -131,12 +131,13 @@ namespace LargeEDIFileReader
             this.Reader.Seek(pageStartPos, SeekOrigin.Begin);
             int i = 0;
             string curSegment = "x";
-            while (i< this.PageSize && !String.IsNullOrEmpty(curSegment))
+            while (i < this.PageSize && !String.IsNullOrEmpty(curSegment))
             {               
                 curSegment = ReadSegment();
                 builder.Append(curSegment);
                 i++;
             }
+
             return builder.ToString();
         }
 
