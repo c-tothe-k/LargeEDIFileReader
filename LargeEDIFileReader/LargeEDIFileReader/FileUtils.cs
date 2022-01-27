@@ -76,7 +76,7 @@ namespace LargeEDIFileReader
        
         public static void Close()
         {
-            FileReader.Dispose();
+            FileReader?.Dispose();
         }
     }
 }

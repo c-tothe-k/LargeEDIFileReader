@@ -32,9 +32,9 @@
             </StackPanel>
         </StackPanel>
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" AllowDrop="True"  >
                 <TextBox x:Name="Gutter" Height="374" Width="61" Margin="15,21,0,0" BorderThickness="2,2,0,2" Background="#FFDCD8D8" FontFamily="Consolas" FontSize="12pt" ScrollViewer.ScrollChanged="Gutter_ScrollChanged"/>
-                <TextBox x:Name="FileContent" Margin="0,21,15,0"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="374" IsReadOnly="True" Width="876" BorderThickness="0,2,2,2" ScrollViewer.ScrollChanged="FileContent_ScrollChanged" />
+                <TextBox x:Name="FileContent" Margin="0,21,15,0"  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="374" IsReadOnly="True" Width="876" BorderThickness="0,2,2,2" ScrollViewer.ScrollChanged="FileContent_ScrollChanged" PreviewDragOver="FileContent_PreviewDragOver" PreviewDrop="FileContent_Drop" />
             </StackPanel>
             <TextBox Name="SearchResults"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"  FontFamily="Consolas" FontSize="12pt" Height="220" Margin="31,15,31,10" IsReadOnly="True" MouseDoubleClick="NavigateToElement" />
         </StackPanel>

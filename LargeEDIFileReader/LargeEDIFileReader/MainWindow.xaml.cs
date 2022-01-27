@@ -32,28 +32,34 @@ namespace LargeEDIFileReader
             var picker = new OpenFileDialog();
             if (picker.ShowDialog() == true)
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-                SearchResults.Text = String.Empty;
-                FileName.Text = $"File Open: {picker.FileName}";
+                ProcessFileLoad(picker.FileName);
+            }
+        }
 
-                var fileStream = File.OpenRead(picker.FileName);
-                var ediStream = new EDIFileStream(fileStream);
+        private void ProcessFileLoad(string fileName)
+        {
 
-                bool fileOk = FileUtils.OpenEDIFile(ediStream);
-                if (!fileOk)
-                {
-                    Mouse.OverrideCursor = null;
-                    MessageBox.Show("Error: File is not an X12 EDI file. Please try a different file.");
-                }
-                else
-                {
-                   
-                    TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
-                    FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
-                    CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
-                    UpdateLineNumbers();
-                    Mouse.OverrideCursor = null;
-                }
+            Mouse.OverrideCursor = Cursors.Wait;
+            SearchResults.Text = String.Empty;
+            FileName.Text = $"File Open: {fileName}";
+
+            var fileStream = File.OpenRead(fileName);
+            var ediStream = new EDIFileStream(fileStream);
+
+            bool fileOk = FileUtils.OpenEDIFile(ediStream);
+            if (!fileOk)
+            {
+                Mouse.OverrideCursor = null;
+                MessageBox.Show("Error: File is not an X12 EDI file. Please try a different file.");
+            }
+            else
+            {
+
+                TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
+                FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
+                CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
+                UpdateLineNumbers();
+                Mouse.OverrideCursor = null;
             }
         }
 
@@ -148,6 +154,22 @@ namespace LargeEDIFileReader
         private void Gutter_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             FileContent.ScrollToVerticalOffset(e.VerticalOffset);
+        }
+
+        private void FileContent_Drop(object sender, DragEventArgs e)
+        {
+           if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var file = files[0];
+                ProcessFileLoad(file);
+            }
+        }
+
+
+        private void FileContent_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }
