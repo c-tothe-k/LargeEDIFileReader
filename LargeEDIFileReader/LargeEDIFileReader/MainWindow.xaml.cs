@@ -38,28 +38,36 @@ namespace LargeEDIFileReader
 
         private void ProcessFileLoad(string fileName)
         {
-
-            Mouse.OverrideCursor = Cursors.Wait;
-            SearchResults.Text = String.Empty;
-            FileName.Text = $"File Open: {fileName}";
-
-            var fileStream = File.OpenRead(fileName);
-            var ediStream = new EDIFileStream(fileStream);
-
-            bool fileOk = FileUtils.OpenEDIFile(ediStream);
-            if (!fileOk)
+            try
             {
-                Mouse.OverrideCursor = null;
-                MessageBox.Show("Error: File is not an X12 EDI file. Please try a different file.");
-            }
-            else
-            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                SearchResults.Text = String.Empty;
+                FileName.Text = $"File Open: {fileName}";
 
-                TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
-                FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
-                CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
-                UpdateLineNumbers();
+                var fileStream = File.OpenRead(fileName);
+                var ediStream = new EDIFileStream(fileStream);
+
+                bool fileOk = FileUtils.OpenEDIFile(ediStream);
+                if (!fileOk)
+                {
+                    Mouse.OverrideCursor = null;
+                    MessageBox.Show("Error: File is not an X12 EDI file. Please try a different file.");
+                }
+                else
+                {
+
+                    TotalPages.Text = $"Total Pages: {Convert.ToString(FileUtils.TotalPages)}";
+                    FileContent.Text = FileUtils.LoadPage(FileUtils.NavigationType.Next);
+                    CurrentPage.Text = $"Current Page: {Convert.ToString(FileUtils.CurrentPageNumber)}";
+                    UpdateLineNumbers();
+                    Mouse.OverrideCursor = null;
+                }
+            } 
+            catch (Exception ex)
+            {
+                FileName.Text = String.Empty;
                 Mouse.OverrideCursor = null;
+                MessageBox.Show($"An Error occurred processing the file.\n\nError is: {ex.Message}", "File Open Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -162,7 +170,9 @@ namespace LargeEDIFileReader
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 var file = files[0];
-                ProcessFileLoad(file);
+              
+                    ProcessFileLoad(file);
+                
             }
         }
 

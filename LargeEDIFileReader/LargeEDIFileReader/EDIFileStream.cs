@@ -21,6 +21,8 @@ namespace LargeEDIFileReader
 
         private static char ElementDelimeter { get; set; }
 
+        private static bool HasTrailingNewLine { get; set; } = false;
+
 
         private static readonly int EnvelopeSize = 106;
 
